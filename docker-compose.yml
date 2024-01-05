@@ -28,21 +28,6 @@ services:
       - 5433
     command: -p 5433
 
-  #db-bancob:
-  #  container_name: db-bancob
-  #  image: mysql:8.0.33
-  #  restart: unless-stopped
-  #  environment:
-  #    MYSQL_DATABASE: ms_bancob
-   #   MYSQL_USER: root
-      #MYSQL_PASSWORD: 123
-      #MYSQL_ROOT_PASSWORD: 123
-      #MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-  #  ports: 
-  #    - 3306:3306
-  #  expose:
-  #    - 3306
-
   db-bancoc:
     container_name: db-bancoc
     image: postgres:15.2
