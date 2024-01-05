@@ -1,0 +1,58 @@
+version: '3'
+services:
+  db-bancoa:
+    container_name: db-bancoa
+    image: postgres:15.2
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ms_bancoa
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports: 
+      - 5431:5431
+    expose:
+      - 5431
+    command: -p 5431
+
+  db-bancob:
+    container_name: db-bancob
+    image: postgres:15.2
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ms_bancob
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports: 
+      - 5433:5433
+    expose:
+      - 5433
+    command: -p 5433
+
+  #db-bancob:
+  #  container_name: db-bancob
+  #  image: mysql:8.0.33
+  #  restart: unless-stopped
+  #  environment:
+  #    MYSQL_DATABASE: ms_bancob
+   #   MYSQL_USER: root
+      #MYSQL_PASSWORD: 123
+      #MYSQL_ROOT_PASSWORD: 123
+      #MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+  #  ports: 
+  #    - 3306:3306
+  #  expose:
+  #    - 3306
+
+  db-bancoc:
+    container_name: db-bancoc
+    image: postgres:15.2
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ms_bancoc
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports: 
+      - 5434:5434
+    expose:
+      - 5434
+    command: -p 5434
