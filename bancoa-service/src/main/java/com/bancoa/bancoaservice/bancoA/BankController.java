@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import reactor.core.publisher.Mono;
+
 // API layer (capa)
 @RequestMapping(path = "/bancoa")
 @RestController
@@ -20,18 +22,6 @@ public class BankController {
     public List<Client> getClients() {
         return bankService.getClients(); 
     }
-
-    /* 
-    @PostMapping("/clientes")
-    public void registerNewClient(@RequestBody Client client) { 
-        bankService.addNewClient(client);
-    }
-
-    @DeleteMapping(path = "/clientes/{clientId}") 
-    public void deleteClient(@PathVariable("clientId") Long clientId) {
-        bankService.deleteClient(clientId);
-    } 
-    */
 
     @PutMapping(path = "/clientes/{clientId}") 
     public void updateClient(
@@ -48,17 +38,15 @@ public class BankController {
         return bankService.getAccounts(); 
     }
 
-    /*
-    @PostMapping("/cuentas")
-    public void registerNewAccount(@RequestBody Account account) { 
-        bankService.addNewAccount(account);
+    @PutMapping("/cuentas/deposito/{accountId}/{amount}")
+    public void deposit(@PathVariable String accountId, @PathVariable Double amount) {
+        bankService.deposit(accountId, amount);
     }
 
-    @DeleteMapping("/cuentas/{accountId}") 
-    public void deleteAccount(@PathVariable("accountId") String accountId) {
-        bankService.deleteAccount(accountId);
-    } 
-    */
+    @PutMapping("/cuentas/retiro/{accountId}/{amount}")
+    public void withdraw(@PathVariable String accountId, @PathVariable Double amount) {
+        bankService.withdraw(accountId, amount);
+    }
 
     @PutMapping("/cuentas/{accountId}") 
     public void updateContract(
@@ -68,14 +56,53 @@ public class BankController {
         bankService.updateContract(accountId, contractContent);
     }
 
-    @PutMapping("/cuentas/deposito/{accountId}/{amount}")
-    public void deposit(@PathVariable String accountId, @PathVariable Double amount) {
-        bankService.deposit(accountId, amount);
+    // CLIENTES - OTROS BANCOS
+
+    @GetMapping("/clientes/otros/{bankId}")
+    public Mono<List<Client>> getClientsFromOtherBank(
+        @PathVariable String bankId) {
+        return bankService.callGetClientsFromOtherBank(bankId);
     }
 
-    @PutMapping("/cuentas/retiro/{accountId}/{amount}")
-    public void withdraw(@PathVariable String accountId, @PathVariable Double amount) {
-        bankService.withdraw(accountId, amount);
+    @PutMapping("/clientes/otros/{bankId}/{clientId}")
+    public Mono<Void> updateClientOnOtherBank(
+        @PathVariable String bankId, 
+        @PathVariable Long clientId, 
+        @RequestParam(required = false) String name, 
+        @RequestParam(required = false) String email) {
+        return bankService.callUpdateClientOnOtherBank(bankId, clientId, name, email);
+    }
+
+    // CUENTAS - OTROS BANCOS
+
+    @GetMapping("/cuentas/otros/{bankId}")
+    public Mono<List<Account>> getAccountsFromOtherBank(
+        @PathVariable String bankId) {
+        return bankService.callGetAccountsFromOtherBank(bankId);
+    }
+    
+    @PutMapping("/cuentas/deposito/otros/{bankId}/{accountId}/{amount}")
+    public Mono<Void> depositToOtherBank(
+        @PathVariable String bankId, 
+        @PathVariable String accountId, 
+        @PathVariable Double amount) {
+        return bankService.callDepositToOtherBank(bankId, accountId, amount);
+    }
+
+    @PutMapping("/cuentas/retiro/otros/{bankId}/{accountId}/{amount}")
+    public Mono<Void> withdrawFromOtherBank(
+        @PathVariable String bankId, 
+        @PathVariable String accountId, 
+        @PathVariable Double amount) {
+        return bankService.callWithdrawFromOtherBank(bankId, accountId, amount);
+    }
+
+    @PutMapping("/cuentas/contrato/otros/{bankId}/{accountId}/{contract}")
+    public Mono<Void> updateContractOnOtherBank(
+        @PathVariable String bankId, 
+        @PathVariable String accountId, 
+        @PathVariable String contract) {
+        return bankService.callUpdateContractOnOtherBank(bankId, accountId, contract);
     }
 
 }
